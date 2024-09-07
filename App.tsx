@@ -1,109 +1,158 @@
-// Import necessary components and libraries
+// Import necessary modules and components
 import React, { useState } from 'react';
-import type { PropsWithChildren } from 'react';
-import { View, Text, StyleSheet, ImageSourcePropType, Image, Pressable} from 'react-native';
+import { FlatList, Pressable, StatusBar, StyleSheet, Text,TextInput,View } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
-// Import dice images
-import one from './src/one.png'
-import Two from './src/two.png'
-import Three from './src/three.png'
-import four from './src/four.png'
-import five from './src/five.png'
-import six from './src/six.png'
+// Import constants
+import { currencyByRupee } from './src/constants';
+//Component
+import CurrencyButton from './src/components/CurrencyButton';
+import Snackbar from 'react-native-snackbar';
 
-// Define DiceProps type
-type DiceProps = PropsWithChildren<{
-  imageUrl:ImageSourcePropType
-}>
-
-// Define options for haptic feedback
+// Define haptic feedback options
 const options = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: true,
 };
 
-// Define Dice component
-const Dice = ({imageUrl}:DiceProps):JSX.Element =>{
-  return(
-    <Image style= {styles.diceImage} source={imageUrl} />
-  )
-}
+// Define the App component
+export default function App(): JSX.Element{
+  const [inputValue, setInputValue] = useState('')
+  const [resultValue, setResultValue] = useState('')
+  const [targetCurrency, setTargetCurrency] = useState('')
 
-// Define App component
-export default function App():JSX.Element{
-  // State variable for the current dice image
-  const [diceImage, setDiceImage] = useState<ImageSourcePropType>(one)
-  // Function to roll the dice
-  const rollDiceTap = () => {
-    // Generate a random number between 1 and 6
-    let randomNumber = Math.floor(Math.random() * 6) + 1; 
-    // Update the dice image based on the random number
-    switch(randomNumber){
-      case 1:
-        setDiceImage(one)
-        break;
-      case 2:
-        setDiceImage(Two)
-        break;
-      case 3:
-        setDiceImage(Three)
-        break;
-      case 4:
-        setDiceImage(four)
-        break;
-      case 5:
-        setDiceImage(five)
-        break;
-      case 6:
-        setDiceImage(six)
-        break;
-      default:
-      break;
+  // Function to handle button press
+  const buttonPressed = (targetValue: Currency) => {
+    if (!inputValue) {
+      return Snackbar.show({
+        text: "Enter a value to convert",
+        backgroundColor: "#EA7773",
+        textColor: "#000000"
+      })
     }
-    // Trigger haptic feedback
-    ReactNativeHapticFeedback.trigger('impactHeavy', options);
+
+    // Parse input value to float
+    const inputAmount = parseFloat(inputValue)
+    // Check if input value is a valid number
+    if (!isNaN(inputAmount)) {
+      // Calculate converted value
+      const convertedValue = inputAmount * targetValue.value
+      // Format result string
+      const result = `${targetValue.symbol} ${convertedValue.toFixed(2)  }`
+      // Update result value and target currency state
+      setResultValue(result)
+      setTargetCurrency(targetValue.name)
+    } else {
+      // Show snackbar if input value is not a valid number
+      return Snackbar.show({
+        text: "NOt a valid number to convert",
+        backgroundColor: "#F4BE2C",
+        textColor: "#000000"
+      })
+    }
   }
-  // Return the app component
+  // Render the App component
   return (
-    <View style={styles.container}>
-      {/* Display the current dice image */}
-      <Dice imageUrl={diceImage} />
-      {/* Button to roll the dice */}
-      <Pressable onPress={rollDiceTap} >
-        <Text style = {styles.rollDiceBtnText}>Roll Dice</Text>
-      </Pressable>
-    </View>
-  )
- 
+    <>
+      <StatusBar/>
+      <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <View style={styles.rupeesContainer}>
+            <Text style={styles.rupee}>₹</Text>
+            <TextInput
+            maxLength={14}
+            value={inputValue}
+            clearButtonMode='always' //only for iOS
+            onChangeText={setInputValue}
+            keyboardType='number-pad'
+            placeholder='Enter amount in Rupees'
+            />
+          </View>
+          {resultValue && (
+            <Text style={styles.resultTxt} >
+              {resultValue}
+            </Text>
+          )}
+        </View>
+        <View style={styles.bottomContainer}>
+          <FlatList
+          numColumns={3}
+          data={currencyByRupee}
+          keyExtractor={item => item.name}
+          renderItem={({item}) => (
+            <Pressable
+            style={[
+              styles.button, 
+              targetCurrency === item.name && styles.selected
+            ]}
+            onPress={() => { buttonPressed(item);
+            ReactNativeHapticFeedback.trigger('impactHeavy', options);
+             }}
+            >
+              <CurrencyButton {...item} />
+            </Pressable>
+          )}
+          />
+        </View>
+      </View>
+    </>
+  );
 }
 
-// Define styles for the app
+// Define styles for the App component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#515151',
+  },
+  topContainer: {
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: '#2c3e50',
+    justifyContent: 'space-evenly',
   },
-  diceContainer:{
-    margin:12,
+  resultTxt: {
+    fontSize: 32,
+    color: '#000000',
+    fontWeight: '800',
   },
-  diceImage:{
-    width:200,
-    height:200,
-    borderRadius:20,
+  rupee: {
+    marginRight: 8,
+
+    fontSize: 22,
+    color: '#000000',
+    fontWeight: '800',
   },
-  rollDiceBtnText:{
-    paddingVertical:10,
-    paddingHorizontal:40,
-    borderWidth:2,
-    borderRadius:8,
-    borderColor:'#E5E0FF',
-    fontSize:16,
-    color: '#8EA7E9',
-    fontWeight:'700',
-    textTransform:'uppercase',
-    marginVertical:10,
-  }
+  rupeesContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inputAmountField: {
+    height: 40,
+    width: 200,
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+  },
+  bottomContainer: {
+    flex: 3,
+  },
+  button: {
+    flex: 1,
+    margin: 12,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    elevation: 2,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowColor: '#333',
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  selected: {
+    backgroundColor: '#ffeaa7',
+  },
 });

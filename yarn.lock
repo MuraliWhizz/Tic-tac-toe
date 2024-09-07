@@ -6046,7 +6046,12 @@ react-native-haptic-feedback@^2.3.1:
   resolved "https://registry.npmjs.org/react-native-haptic-feedback/-/react-native-haptic-feedback-2.3.1.tgz"
   integrity sha512-dPfjV4iVHfhVyfG+nRd88ygjahbdup7KFZDM5L2aNIAzqbNtKxHZn5O1pHegwSj1t15VJliu0GyTX7XpBDeXUw==
 
-react-native@*, react-native@>=0.60.0, react-native@0.75.2:
+react-native-snackbar@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.npmjs.org/react-native-snackbar/-/react-native-snackbar-2.6.2.tgz"
+  integrity sha512-edAubZJiBowwQUXJV5oXbMqitQ9vw7JzWUCczeTPVo6lRa+FzsUjiCQBHdWBbCw/N8/Q7jgKg4juNXU/bXZdXg==
+
+react-native@*, react-native@>=0.60, react-native@>=0.60.0, react-native@0.75.2:
   version "0.75.2"
   dependencies:
     "@jest/create-cache-key-function" "^29.6.3"
@@ -6104,7 +6109,7 @@ react-test-renderer@18.3.1:
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.2"
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", react@^18.2.0, react@^18.3.1, react@>=16.8.0, react@18.3.1:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", react@^18.2.0, react@^18.3.1, react@>=16, react@>=16.8.0, react@18.3.1:
   version "18.3.1"
   dependencies:
     loose-envify "^1.1.0"
