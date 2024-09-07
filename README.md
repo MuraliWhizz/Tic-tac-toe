@@ -1,3 +1,20 @@
+Tic-Tac-Toe Game
+This is a simple Tic-Tac-Toe game built using React Native. The app supports two players (X and O) and allows users to play a local game on a 3x3 grid. The app includes winner detection, draw detection, and a reset button to start a new game.
+
+Table of Contents
+Features
+Installation
+Usage
+Game Logic
+Haptic Feedback
+
+Two-player Tic-Tac-Toe game.
+Detects the winner or a draw.
+Game reset button to start a new game.
+Haptic feedback on each tap.
+Snackbar notifications for game status updates.
+User-friendly UI with turn indicator.
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
